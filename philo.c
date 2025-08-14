@@ -2,9 +2,13 @@
 
 void	*routine(void *arg)
 {
+	//aqui tiene que pasar toda la movida de comer dormimir y todo eso?¿
 	pthread_mutex_t *mutex = (pthread_mutex_t *)arg;
 	pthread_mutex_lock(mutex);
-	ft_putstr_fd("INSIDE ROUTINE FUNCTION\n", 1);
+	ft_putstr_fd("EATING\n", 1);
+	pthread_mutex_unlock(mutex);
+	pthread_mutex_lock(mutex);
+	ft_putstr_fd("SLEEPING\n", 1);
 	pthread_mutex_unlock(mutex);
 	return NULL;
 }
@@ -81,6 +85,7 @@ int	main(int argc, char *argv[])
 		ft_putstr_fd("Error\n", 2);
 		return 1;
 	}
+	
 	init_data(argv, &data, argc);
 	if (!check_valid_argument(&data, argc))
 	{
@@ -88,9 +93,7 @@ int	main(int argc, char *argv[])
 		return 1;
 	}
 	if(create_philosophers(&data) != 0)
-	{
 		return 1;
-	}
 	return 0;
 }
 

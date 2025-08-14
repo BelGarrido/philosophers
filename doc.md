@@ -20,6 +20,12 @@ void *restrict arg)
 - thread: the ID of the thread that this thread should wait for. The specified thread must be joinable (meaning not detached - see below).
 - retval: a pointer towards a variable that can contain the return value of the thread’s routine function (the start_routine function we supplied at its creation). Here, we will not need this value: a simple NULL will suffice.
 
+#### DETACHE A THREAD
+>**int pthread_detach** (pthread_t thread);
+- thread: the ID of the thread that this thread should wait for. The specified thread must be joinable (meaning not detached - see below).
+
+Tells the system to automatically reclaim resources once the thread terminates.
+
 The pthread_join function returns 0 for success, or an error code for failure.
 ### RACE CONDITION
 It occurs when 2 or more threads can access to data and try to modify it at the same time.
@@ -56,6 +62,28 @@ Returned value If successful, pthread_mutex_destroy() returns 0. If unsuccessful
 	- time_to_sleep
 	- [number_of_times_each_philosopher_must_eat]
 - Cada filósofo tendrá asignado un número del 1 al number_of_philosophers.
+
+## FUNCTIONS
+
+**gettimeofday()** int gettimeofday(struct timeval *tv, struct timezone *tz)
+
+- Sets the current wall-clock time and/or timezone for the system.
+- timeval tv: A pointer to a struct timeval where the current time will be stored.
+
+ **memset** --> fills the first n bytes of the memory area
+      pointed to by s with the constant byte c.
+ **printf** \
+ **malloc** \
+ **free** \
+ **write** \
+ **usleep** \
+ **pthread_create** \
+ **pthread_detach** \
+ **pthread_join** \
+ **pthread_mutex_init** \
+ **pthread_mutex_destroy** \
+ **pthread_mutex_lock** \
+ **pthread_mutex_unlock**
 
 ## OUTPUT
 > Cualquier cambio de estado de un filósofo debe tener el siguiente formato:
