@@ -12,12 +12,23 @@ typedef struct s_data
 	int	time_to_eat;
 	int	time_to_sleep;
 	int	num_of_time_each_must_eat;
+	long	start_time;			// Tiempo de inicio del programa
+	int		simulation_end;		// Flag para terminar simulación
+	pthread_mutex_t	*forks;				// Array de mutex para tenedores
+	pthread_mutex_t	print_mutex;		// Mutex para imprimir sin mezclar
+	pthread_mutex_t	death_mutex;		// Mutex para verificar muerte
+	t_philo	*philosophers;
+
 }	t_data;
 
 typedef struct s_philo
 {
-	int X;
-	int died;
+	int	id;						// ID del filósofo (1 a N)
+	int	meals_count;			// Veces que ha comido
+	long last_meal_time;		// Timestamp de última comida
+
+	pthread_mutex_t mutex_philo;
+	t_data *data;
 	// other parameters I still dont know 
 }	t_philo;
 

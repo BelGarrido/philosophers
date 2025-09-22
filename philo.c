@@ -13,7 +13,7 @@ void	*routine(void *arg)
 	return NULL;
 }
 
-int	create_philosophers(t_data *data)
+int	init_philosophers(t_data *data)
 {
 	int i;
 	printf("Number of philosophers: %i.\n", data->num_philosophers);
@@ -53,27 +53,10 @@ int	create_philosophers(t_data *data)
 	return (0);
 }
 
-void	init_data(char *argv[], t_data *data, int argc)
+void	init_data(t_data *data)
 {
-	data->num_philosophers = ft_atoi(argv[1]);
-	data->time_to_die = ft_atoi(argv[2]);
-	data->time_to_eat = ft_atoi(argv[3]);
-	data->time_to_sleep = ft_atoi(argv[4]);
-	if (argc == 6)
-		data->num_of_time_each_must_eat = ft_atoi(argv[5]);
-	else 
-		data->num_of_time_each_must_eat = 0;
-}
+	init_forks(data); //crea los mutex??
 
-int	 check_valid_argument(t_data *data, int argc)
-{
-	if (data->num_philosophers < 1 || data->num_philosophers > 200)
-		return 0;
-	else if ((data->time_to_die <= 0) || (data->time_to_eat <= 0) || (data->time_to_sleep <= 0))
-		return 0;
-	else if (argc == 6 && data->num_of_time_each_must_eat <= 0)
-		return 0;
-	return 1;
 }
 
 int	main(int argc, char *argv[])
@@ -85,15 +68,18 @@ int	main(int argc, char *argv[])
 		ft_putstr_fd("Error\n", 2);
 		return 1;
 	}
-	
-	init_data(argv, &data, argc);
+	init_arguments(argv, &data, argc);
 	if (!check_valid_argument(&data, argc))
 	{
 		ft_putstr_fd("Error\n", 2);
 		return 1;
 	}
-	if(create_philosophers(&data) != 0)
+	init_data(&data);
+	//init data (?)
+	if(init_philosophers(&data) != 0)
 		return 1;
+	//start_meals()
+	//end_meal()
 	return 0;
 }
 
