@@ -1,6 +1,6 @@
 #include "philo.h"
 
-long time_to_miliseconds(void)
+long	time_to_miliseconds(void)
 {
 	struct timeval tv;
 	long int time;
@@ -8,7 +8,7 @@ long time_to_miliseconds(void)
 	time = tv.tv_sec * 1000 + tv.tv_usec / 1000;
 	return (time);
 }
-long get_timestamp(long start_time)
+long	get_timestamp(long start_time)
 {
 	long long time;
 	time = time_to_miliseconds() - start_time;

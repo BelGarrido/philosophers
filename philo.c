@@ -13,7 +13,7 @@ void	*routine(void *arg)
 	return NULL;
 }
 
-int	init_philosophers(t_data *data)
+/* int	init_philosophers(t_data *data)
 {
 	int i;
 	printf("Number of philosophers: %i.\n", data->num_philosophers);
@@ -22,7 +22,7 @@ int	init_philosophers(t_data *data)
 	
 	i = 0;
 	pthread_mutex_init(&mutex, NULL);
-	while(i < data->num_philosophers)
+	while(i < data->num_philos)
 	{
 		if(pthread_create(&t[i], NULL, &routine, &mutex) != 0)
 		{
@@ -35,7 +35,7 @@ int	init_philosophers(t_data *data)
 		pthread_mutex_unlock(&mutex);
 	}
 	i = 0;
-	while(i < data->num_philosophers)
+	while(i < data->num_philos)
 	{
 		if(pthread_join(t[i], NULL) != 0)
 		{
@@ -51,12 +51,45 @@ int	init_philosophers(t_data *data)
 	
 	printf("Done\n");
 	return (0);
+} */
+
+int	init_forks(pthread_mutex_t *forks, t_data *data)
+{
+	int i = 0;
+	//tengo que reservar memoria si estoy declarandolo en el main?
+	//data->forks = malloc(forks_num * sizeof(pthread_mutex_t));
+	while(i < data->num_philos)
+	{
+		if(!pthread_mutex_init(&forks[i + 1], NULL))
+		{
+			perror("Error");
+			return 0;	
+		}
+		i++;
+	}
+	return 1;
 }
 
-void	init_data(t_data *data)
+int init_philosophers(t_philo *philo, t_data *data, pthread_mutex_t *forks, pthread_t *threads)
 {
-	init_forks(data); //crea los mutex??
-
+	int i = 1;
+	while(i <= data->num_philos)
+	{
+		philo->id = 1;
+		philo->data = data;
+		//cada filosofo coge en segundo lugar su tnedor con la izquierda (i)
+		philo->r_fork = &forks[i];
+		//cada filosofo coge primero el tenedor de su derecha (i + 1 )
+		philo->l_fork = &forks[(i + 1) % data->num_philos];
+		//inicializar todos los campos, por ahora no tengo mas
+	}
+	while(i <= data->num_philos)
+	{
+		//pthread_create(thread, attr, routine, arg)
+		if(!pthread_create(&threads[i], NULL, philo_routine, (void *)&philo[i]))
+			return 0;
+	}
+	return 1;
 }
 
 int	main(int argc, char *argv[])
@@ -74,9 +107,17 @@ int	main(int argc, char *argv[])
 		ft_putstr_fd("Error\n", 2);
 		return 1;
 	}
+	//Pero en C no puedes hacer eso exactamente de esa forma si data.num_philos no es una constante en tiempo de compilación.
+/* 	pthread_mutex_t forks[data.num_philos];
+	pthread_t philo[data.num_philos]; */
+	pthread_mutex_t forks[MAX];
+	t_philo philo[MAX];
+	pthread_t threads[MAX];
 	init_data(&data);
+	if(!init_forks(forks, &data))
+		return 1;
 	//init data (?)
-	if(init_philosophers(&data) != 0)
+	if(!init_philosophers(philo, &data, threads))
 		return 1;
 	//start_meals()
 	//end_meal()
