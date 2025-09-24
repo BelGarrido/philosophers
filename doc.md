@@ -96,3 +96,44 @@ Returned value If successful, pthread_mutex_destroy() returns 0. If unsuccessful
 *Reemplaza timestamp_in_ms con la marca de tiempo actual en milisegundos
 y X con el numero del filósofo.*
 
+
+
+/* int	init_philosophers(t_data *data)
+{
+	int i;
+	printf("Number of philosophers: %i.\n", data->num_philosophers);
+	pthread_mutex_t mutex;
+	pthread_t	t[data->num_philosophers];
+	
+	i = 0;
+	pthread_mutex_init(&mutex, NULL);
+	while(i < data->num_philos)
+	{
+		if(pthread_create(&t[i], NULL, &routine, &mutex) != 0)
+		{
+			ft_putstr_fd("Error creating thread\n", 2);
+			return 1;
+		}
+		i++;
+		pthread_mutex_lock(&mutex);
+		printf("Thread %i created\n", i);
+		pthread_mutex_unlock(&mutex);
+	}
+	i = 0;
+	while(i < data->num_philos)
+	{
+		if(pthread_join(t[i], NULL) != 0)
+		{
+			ft_putstr_fd("Error finishing thread\n", 2);
+			return 1;
+		}
+		i++;
+		pthread_mutex_lock(&mutex);
+		printf("Thread %i has finish\n", i);
+		pthread_mutex_unlock(&mutex);
+	}
+	pthread_mutex_destroy(&mutex);
+	
+	printf("Done\n");
+	return (0);
+} */

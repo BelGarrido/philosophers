@@ -1,6 +1,6 @@
 #include "philo.h"
 
-long	time_to_miliseconds(void)
+long	get_time_ms(void)
 {
 	struct timeval tv;
 	long int time;
@@ -11,13 +11,13 @@ long	time_to_miliseconds(void)
 long	get_timestamp(long start_time)
 {
 	long long time;
-	time = time_to_miliseconds() - start_time;
+	time = get_time_ms() - start_time;
 	return (time);
 }
 
 /* int main()
 {
-	long long program_start = time_to_miliseconds();
+	long long program_start = get_time_ms();
 	printf("Something happend at %lld\n", get_timestamp(program_start));
 	usleep(40000);
 	printf("Something happend at %lld\n", get_timestamp(program_start));
