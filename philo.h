@@ -42,13 +42,16 @@ typedef struct s_philo
 	// other parameters I still dont know 
 }	t_philo;
 
-
+/*Actions*/
+void	eat(t_philo *philo);
 /*Check_args*/
 void	init_arguments(char **argv, t_data *data, int argc);
-int	check_valid_argument(char **argv, int argc);
+int		check_valid_argument(char **argv, int argc);
+int		ft_atoi(const char *s);
 /*Get_time.c*/
 long	get_timestamp(long start_time);
 long	get_time_ms(void);
+void	ft_usleep(long int miliseconds);
 /*Utils*/
 void	ft_putstr_fd(char *s, int fd);
-int	ft_atoi(const char *s);
+void	print_locked(t_philo *philo, char *msg);

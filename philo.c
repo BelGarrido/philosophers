@@ -2,39 +2,27 @@
 
 void	*philo_routine(void *arg)
 {
-	//aqui tiene que pasar toda la movida de comer dormimir y todo eso?¿
 	t_philo *philo = (t_philo*)arg;
 	printf("This is the function routine with philo[%i]\n", philo->id);
 	if((philo->id % 2) == 0)
 	{
 		pthread_mutex_lock(philo->r_fork);
-		pthread_mutex_lock(philo->print_mutex);
-		printf("%i has taken its right fork\n", philo->id);
-		pthread_mutex_unlock(philo->print_mutex);
-		if(pthread_mutex_lock(philo->l_fork))
-			pthread_mutex_unlock(philo->r_fork);
-		pthread_mutex_lock(philo->print_mutex);
-		printf("%i has taken its left fork\n", philo->id);
-		pthread_mutex_unlock(philo->print_mutex);
+		print_locked(philo, "has taken its right fork");
+		pthread_mutex_lock(philo->l_fork);
+		print_locked(philo, "has taken its left fork");
 	}
-	if((philo->id % 2) != 0)
+	else if((philo->id % 2) != 0)
 	{
 		pthread_mutex_lock(philo->l_fork);
-		pthread_mutex_lock(philo->print_mutex);
-		printf("%i has taken its left fork\n", philo->id);
-		pthread_mutex_unlock(philo->print_mutex);
-		if(pthread_mutex_lock(philo->r_fork))
-			pthread_mutex_unlock(philo->l_fork);
-		pthread_mutex_lock(philo->print_mutex);
-		printf("%i has taken its right fork\n", philo->id);
-		pthread_mutex_unlock(philo->print_mutex);
+		print_locked(philo, "has taken its left fork");
+		pthread_mutex_lock(philo->r_fork);
+		print_locked(philo, "has taken its right fork");
 	}
-/* 	pthread_mutex_lock(mutex);
-	ft_putstr_fd("EATING\n", 1);
-	pthread_mutex_unlock(mutex);
-	pthread_mutex_lock(mutex);
-	ft_putstr_fd("SLEEPING\n", 1);
-	pthread_mutex_unlock(mutex);*/
+	eat(philo); //habra que cambiar algunas variables dentro 
+	print_locked(philo, "is sleeping");
+	ft_usleep(philo->data->time_to_sleep);
+	print_locked(philo, "is thinking");
+	printf("%i\n", philo->meals_count);
 	return NULL;
 }
 
