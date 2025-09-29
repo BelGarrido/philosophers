@@ -16,10 +16,10 @@ void	*monitor_routine(void *arg)
 		{
 			pthread_mutex_lock(&data->monitor_mutex);
 			int time_since_meal = get_time_ms() - data->philosophers[i].last_meal_time;
-			int is_eating = data->philosophers[i].is_eating;
+			//int is_eating = data->philosophers[i].is_eating;
 			int meals_count = data->philosophers[i].meals_count;
 			pthread_mutex_unlock(&data->monitor_mutex);
-			if(time_since_meal > data->time_to_die && !is_eating)
+			if(time_since_meal > data->time_to_die /* && !is_eating */)
 			{
 				pthread_mutex_lock(&data->death_mutex);
 				data->philo_dead = 1;
@@ -36,7 +36,7 @@ void	*monitor_routine(void *arg)
 	if(philos_ate_enough && data->num_time_must_eat)
 	{
 		pthread_mutex_lock(&data->death_mutex);
-        data->simulation_is_completed = 1; // You'll need to add this field to t_data
+        data->simulation_is_completed = 1;
         pthread_mutex_unlock(&data->death_mutex);
 		return NULL;
 	}
