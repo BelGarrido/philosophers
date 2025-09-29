@@ -1,30 +1,22 @@
 #include "philo.h"
 
-void	*philo_routine(void *arg)
+int end_simulation(t_data *data, t_philo *philo)
 {
-	t_philo *philo = (t_philo*)arg;
-	printf("This is the function routine with philo[%i]\n", philo->id);
-	if((philo->id % 2) == 0)
+	int i;
+
+	i = 0;
+	pthread_mutex_destroy(&data->death_mutex);
+	pthread_mutex_destroy(&data->print_mutex);
+	pthread_mutex_destroy(&data->monitor_mutex);
+	while(i < data->num_philos)
 	{
-		pthread_mutex_lock(philo->r_fork);
-		print_locked(philo, "has taken its right fork");
-		pthread_mutex_lock(philo->l_fork);
-		print_locked(philo, "has taken its left fork");
+		pthread_mutex_destroy(&data->forks[i]);
+		pthread_mutex_destroy(&philo[i].eating_mutex);
+		i++;
 	}
-	else if((philo->id % 2) != 0)
-	{
-		pthread_mutex_lock(philo->l_fork);
-		print_locked(philo, "has taken its left fork");
-		pthread_mutex_lock(philo->r_fork);
-		print_locked(philo, "has taken its right fork");
-	}
-	eat(philo); //habra que cambiar algunas variables dentro 
-	print_locked(philo, "is sleeping");
-	ft_usleep(philo->data->time_to_sleep);
-	print_locked(philo, "is thinking");
-	printf("%i\n", philo->meals_count);
-	return NULL;
+
 }
+
 
 int	init_forks(pthread_mutex_t *forks, t_data *data)
 {
@@ -40,12 +32,23 @@ int	init_forks(pthread_mutex_t *forks, t_data *data)
 			return 0;	
 		}
 		i++;
-		printf("creando_fork numero %i\n", i);
+		//printf("creando_fork numero %i\n", i);
 	}
-
 	return 1;
 }
 
+int join_philos(t_philo *philo, t_data *data)
+{
+	int i = 0;
+	while(i < data->num_philos)
+	{
+		if(pthread_join(philo[i].thread, NULL))
+			return 0;
+		//printf("joining_threads numero %i\n", philo[i].id);
+		i++;
+	}
+	return 1;
+}
 int init_philosophers(t_philo *philo, t_data *data)
 {
 	int i = 0;
@@ -53,7 +56,8 @@ int init_philosophers(t_philo *philo, t_data *data)
 	{
 		philo[i].id = i + 1;
 		philo[i].meals_count = 0;
-		philo[i].last_meal_time = 0;
+		philo[i].is_eating = 0;
+		philo[i].last_meal_time = get_time_ms();
 		philo[i].data = data;
 		//cada filosofo coge en segundo lugar su tnedor con la izquierda (i)
 		philo[i].r_fork = &data->forks[i];
@@ -62,7 +66,8 @@ int init_philosophers(t_philo *philo, t_data *data)
 		//inicializar todos los campos, por ahora no tengo mas
 		philo[i].print_mutex = &data->print_mutex;
 		philo[i].death_mutex = &data->death_mutex;
-		printf("creando_philosopher numero %i\n", i + 1);
+		pthread_mutex_init(&philo[i].eating_mutex, NULL);
+		//printf("creando_philosopher numero %i\n", i + 1);
 		i++;
 	}
 	i = 0;
@@ -72,15 +77,7 @@ int init_philosophers(t_philo *philo, t_data *data)
 		//si se crea el hilo correctamente devuelve 0, si no devuelve 1
 		if(pthread_create(&philo[i].thread, NULL, philo_routine, (void *)&philo[i]) != 0)
 			return 0;
-		printf("creando_threads numero %i\n", philo[i].id);
-		i++;
-	}
-	i = 0;
-	while(i < data->num_philos)
-	{
-		if(pthread_join(philo[i].thread, NULL))
-			return 0;
-		printf("joining_threads numero %i\n", philo[i].id);
+		//printf("creando_threads numero %i\n", philo[i].id);
 		i++;
 	}
 	return 1;
@@ -97,11 +94,14 @@ void	init_data(t_data *data, char **argv)
 	else 
 		data->num_time_must_eat = 0;
 
+	data->simulation_is_completed = 0;
 	data->philo_dead = 0;
 	data->start_time = get_time_ms();
 
 	pthread_mutex_init(&data->print_mutex, NULL);
 	pthread_mutex_init(&data->death_mutex, NULL);
+	pthread_mutex_init(&data->monitor_mutex, NULL);
+	//pthread_mutex_init(&data->eating_mutex, NULL);
 
 	data->philosophers = NULL;
 	data->forks = NULL;
@@ -121,9 +121,17 @@ int	main(int argc, char *argv[])
 	init_data(&data, argv);
 	data.philosophers = philo;
     data.forks = forks;
+
 	if(!init_forks(forks, &data))
 		return 1;
 	if(!init_philosophers(philo, &data))
+		return 1;
+	if(pthread_create(&data.monitor_thread, NULL, monitor_routine, (void *)&data) != 0)
+		return 1;
+	//printf("creando el monitor thread numero\n");
+	if(pthread_join(data.monitor_thread, NULL))
+        return 1;
+	if(join_philos(philo, &data))
 		return 1;
 	return 0;
 }

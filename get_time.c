@@ -22,7 +22,7 @@ void ft_usleep(long int miliseconds)
 	long int		start;
 	start = get_time_ms();
 	while((get_time_ms() - start) < miliseconds)
-		usleep(500);
+		usleep(100);
 }
 
 /* int main()
