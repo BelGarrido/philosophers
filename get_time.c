@@ -18,7 +18,6 @@ long	get_timestamp(long start_time)
 
 void ft_usleep(long int miliseconds)
 {
-	struct timeval	tv;
 	long int		start;
 	start = get_time_ms();
 	while((get_time_ms() - start) < miliseconds)

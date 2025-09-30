@@ -65,6 +65,9 @@ int	 check_valid_argument(char **argv, int argc)
     if (!check_value(ft_atoi(argv[4]), 1, -1, "time_to_sleep"))
         return 0;
     if (argc == 6 && !check_value(ft_atoi(argv[5]), 1, -1, "num_of_time_each_must_eat"))
-        return 0;
+    {
+		return 0;
+	}
+
 	return 1;
 }

@@ -25,21 +25,14 @@ void eat(t_philo *philo)
 void take_forks(t_philo *philo)
 {
 
-/* 	if(philo->id == 1)
-    {
-        pthread_mutex_lock(philo->l_fork);
-        print_locked(philo, "has taken left fork");
-        pthread_mutex_lock(philo->r_fork);
-        print_locked(philo, "has taken right fork");
-    }
-    else
-    {
-        pthread_mutex_lock(philo->r_fork);
-        print_locked(philo, "has taken right fork");
-        pthread_mutex_lock(philo->l_fork);
-        print_locked(philo, "has taken left fork");
-    } */
-	if((philo->id % 2) == 0)
+	if(philo->data->num_philos == 1)
+	{	
+		pthread_mutex_lock(philo->r_fork);	
+		print_locked(philo, "has taken a fork");
+		ft_usleep(philo->data->time_to_die);
+		print_locked(philo, "died");
+	}
+	else if((philo->id % 2) == 0)
 	{
 		pthread_mutex_lock(philo->r_fork);
 		print_locked(philo, "has taken a fork"); //(right)
