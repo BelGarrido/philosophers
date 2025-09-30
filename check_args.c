@@ -14,9 +14,7 @@ int	ft_atoi(const char *s)
 	if (s [i] == '+' || s[i] == '-')
 	{
 		if (s[i] == '-')
-		{
 			neg = -neg;
-		}
 		i++;
 	}
 	while (s[i] >= '0' && s[i] <= '9')
@@ -27,19 +25,7 @@ int	ft_atoi(const char *s)
 	return (number * neg);
 }
 
-void	init_arguments(char *argv[], t_data *data, int argc)
-{
-	data->num_philos = ft_atoi(argv[1]);
-	data->time_to_die = ft_atoi(argv[2]);
-	data->time_to_eat = ft_atoi(argv[3]);
-	data->time_to_sleep = ft_atoi(argv[4]);
-	if (argc == 6)
-		data->num_time_must_eat = ft_atoi(argv[5]);
-	else 
-		data->num_time_must_eat = 0;
-}
-
-int check_value(int value, int min, int max, char *msg)
+int	check_value(int value, int min, int max, char *msg)
 {
 	if(value < min || (max > 0 && value > max))
 	{	
@@ -49,11 +35,11 @@ int check_value(int value, int min, int max, char *msg)
 	return 1;
 }
 
-int	 check_valid_argument(char **argv, int argc)
+int	check_valid_argument(char **argv, int argc)
 {
 	if((argc != 5) && (argc != 6))
 	{
-		ft_putstr_fd("Error: Invalid number or arguments\n", 2);
+		fprintf(stderr, "Error: Invalid number or arguments\n");
 		return 0;
 	}
 	if (!check_value(ft_atoi(argv[1]), 0, 200, "num_philos"))
@@ -68,6 +54,5 @@ int	 check_valid_argument(char **argv, int argc)
     {
 		return 0;
 	}
-
 	return 1;
 }

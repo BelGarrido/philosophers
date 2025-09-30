@@ -22,7 +22,7 @@ int	ft_strncmp(char *s1, char *s2, size_t n)
 	return (0);
 }
 
-void print_locked(t_philo *philo, char *msg)
+void	print_locked(t_philo *philo, char *msg)
 {
 	pthread_mutex_lock(philo->death_mutex);
 	if (philo->data->philo_dead || philo->data->simulation_is_completed)
@@ -34,7 +34,7 @@ void print_locked(t_philo *philo, char *msg)
 	{
 		philo->data->philo_dead = 1;
 		pthread_mutex_lock(philo->print_mutex);
-		printf("%li %i is dead\n", get_timestamp(philo->data->start_time),philo->id);
+		printf("%li %i died\n", get_timestamp(philo->data->start_time),philo->id);
 		pthread_mutex_unlock(philo->print_mutex);
 		pthread_mutex_unlock(philo->death_mutex);
 		return;
@@ -45,14 +45,29 @@ void print_locked(t_philo *philo, char *msg)
 	pthread_mutex_unlock(philo->death_mutex);
 }
 
-void	ft_putstr_fd(char *s, int fd)
-{
-	int	i;
+/*time functions*/
 
-	i = 0;
-	while (s[i] != '\0')
-	{
-		write (fd, &s[i], 1);
-		i++;
-	}
+long	get_time_ms(void)
+{
+	struct timeval	tv;
+	long int		time;
+	if (gettimeofday(&tv, NULL) != 0)
+		perror("Error");
+	time = tv.tv_sec * 1000 + tv.tv_usec / 1000;
+	return (time);
+}
+
+long	get_timestamp(long start_time)
+{
+	long long	time;
+	time = get_time_ms() - start_time;
+	return (time);
+}
+
+void	ft_usleep(long int miliseconds)
+{
+	long int		start;
+	start = get_time_ms();
+	while((get_time_ms() - start) < miliseconds)
+		usleep(100);
 }

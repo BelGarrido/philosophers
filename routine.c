@@ -7,6 +7,8 @@ void	*monitor_routine(void *arg)
 	t_data *data = (t_data*)arg;
 	int philos_ate_enough = 0;
 	int i;
+	int time_since_meal;
+	int meals_count;
 	while(!data->philo_dead && !philos_ate_enough)
 	{
 		if(data->num_time_must_eat)
@@ -15,20 +17,19 @@ void	*monitor_routine(void *arg)
 		while(i < data->num_philos)
 		{
 			pthread_mutex_lock(&data->monitor_mutex);
-			int time_since_meal = get_time_ms() - data->philosophers[i].last_meal_time;
-			//int is_eating = data->philosophers[i].is_eating;
-			int meals_count = data->philosophers[i].meals_count;
+			time_since_meal = get_time_ms() - data->philosophers[i].last_meal_time;
+			meals_count = data->philosophers[i].meals_count;
 			pthread_mutex_unlock(&data->monitor_mutex);
-			if(time_since_meal > data->time_to_die /* && !is_eating */)
+			if(time_since_meal > data->time_to_die)
 			{
 				print_locked(&data->philosophers[i], "died");
 				return NULL;
-			}	
+			}
 			if(meals_count < data->num_time_must_eat && data->num_time_must_eat != 0)
-				philos_ate_enough = 0;		
+				philos_ate_enough = 0;
 			i++;
 		}
-		usleep(1000);
+		usleep(500);
 	}
 	if(philos_ate_enough && data->num_time_must_eat)
 	{
