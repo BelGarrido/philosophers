@@ -21,10 +21,7 @@ void	*monitor_routine(void *arg)
 			pthread_mutex_unlock(&data->monitor_mutex);
 			if(time_since_meal > data->time_to_die /* && !is_eating */)
 			{
-				pthread_mutex_lock(&data->death_mutex);
-				data->philo_dead = 1;
 				print_locked(&data->philosophers[i], "died");
-				pthread_mutex_unlock(&data->death_mutex);
 				return NULL;
 			}	
 			if(meals_count < data->num_time_must_eat && data->num_time_must_eat != 0)
