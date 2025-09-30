@@ -40,6 +40,7 @@ void	*monitor_routine(void *arg)
         pthread_mutex_unlock(&data->death_mutex);
 		return NULL;
 	}
+	return NULL;
 }
 
 /*PHILOSOPHER'S ROUTINE 🧠*/

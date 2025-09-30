@@ -14,6 +14,7 @@ int end_simulation(t_data *data, t_philo *philo)
 		pthread_mutex_destroy(&philo[i].eating_mutex);
 		i++;
 	}
+	return 0;
 
 }
 

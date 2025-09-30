@@ -41,7 +41,6 @@ void take_forks(t_philo *philo)
     } */
 	if((philo->id % 2) == 0)
 	{
-		//ft_usleep(50);
 		pthread_mutex_lock(philo->r_fork);
 		print_locked(philo, "has taken a fork"); //(right)
 		pthread_mutex_lock(philo->l_fork);
@@ -49,10 +48,6 @@ void take_forks(t_philo *philo)
 	}
 	else if((philo->id % 2) != 0)
 	{
-		if(philo->id == philo->data->num_philos)  // Solo el último
-		{
-			ft_usleep(50);
-		}
 		pthread_mutex_lock(philo->l_fork);
 		print_locked(philo, "has taken a fork"); //(left)
 		pthread_mutex_lock(philo->r_fork);
