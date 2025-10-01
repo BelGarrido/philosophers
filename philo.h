@@ -5,24 +5,25 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: anagarri <anagarri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/30 17:55:09 by anagarri          #+#    #+#             */
-/*   Updated: 2025/09/30 17:55:14 by anagarri         ###   ########.fr       */
+/*   Created: 2025/10/01 15:31:49 by anagarri          #+#    #+#             */
+/*   Updated: 2025/10/01 15:36:54 by anagarri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <errno.h> 
-#include <stdio.h> 
-#include <pthread.h>
-#include <unistd.h>
-#include <stdlib.h>
-#include <sys/time.h>
+#ifndef PHILO_H
+# define PHILO_H
 
-#ifndef MAX
-#define MAX 200
-#endif
+# include <errno.h>
+# include <stdio.h>
+# include <pthread.h>
+# include <unistd.h>
+# include <stdlib.h>
+# include <sys/time.h>
 
-struct s_philo;
-struct s_data;
+# define MAX 200
+
+struct	s_philo;
+struct	s_data;
 
 typedef struct s_data
 {
@@ -33,7 +34,7 @@ typedef struct s_data
 	int				num_time_must_eat;
 	long			start_time;			// Tiempo de inicio del programa
 	int				philo_dead;	
-	int				simulation_is_completed;		// Flag para terminar simulación
+	int				simulation_is_completed; // Flag para terminar simulación
 	pthread_mutex_t	*forks;				// Array de mutex para tenedores
 	pthread_mutex_t	print_mutex;		// Mutex para imprimir sin mezclar
 	pthread_mutex_t	death_mutex;		// Mutex para verificar muerte
@@ -44,19 +45,16 @@ typedef struct s_data
 
 typedef struct s_philo
 {
-	int				id;						// ID del filósofo (1 a N)
+	int				id;					// ID del filósofo (1 a N)
 	int				meals_count;
-	int				is_eating;			// Veces que ha comido
-	long 			last_meal_time;			// Timestamp de última comida
-	//pthread_mutex_t mutex_philo;
-	pthread_t 		thread;
-	t_data 			*data;
+	long			last_meal_time;		// Timestamp de última comida
+	pthread_t		thread;
+	t_data			*data;
 	pthread_mutex_t	*l_fork;
 	pthread_mutex_t	*r_fork;
 	pthread_mutex_t	*print_mutex;
 	pthread_mutex_t	*death_mutex;
 	pthread_mutex_t	eating_mutex;
-	// other parameters I still dont know 
 }	t_philo;
 
 /*Actions*/
@@ -76,3 +74,6 @@ void	ft_usleep(long int miliseconds);
 /*Utils*/
 void	ft_putstr_fd(char *s, int fd);
 void	print_locked(t_philo *philo, char *msg);
+int		end_simulation(t_data *data, t_philo *philo);
+
+#endif

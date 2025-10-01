@@ -6,7 +6,7 @@
 /*   By: anagarri <anagarri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 17:54:36 by anagarri          #+#    #+#             */
-/*   Updated: 2025/09/30 17:54:55 by anagarri         ###   ########.fr       */
+/*   Updated: 2025/10/01 17:12:22 by anagarri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,61 +14,89 @@
 
 /* MONITORING ROUTINE 🕵️*/
 
+static int	philo_is_dead(t_data *data, int i)
+{
+	int	time_since_meal;
+
+	pthread_mutex_lock(&data->monitor_mutex);
+	time_since_meal = get_time_ms() - data->philosophers[i].last_meal_time;
+	pthread_mutex_unlock(&data->monitor_mutex);
+	if (time_since_meal > data->time_to_die)
+	{
+		print_locked(&data->philosophers[i], "died");
+		return (1);
+	}
+	return (0);
+}
+
+static int	check_if_all_ate(t_data *data)
+{
+	int	i;
+	int	meals_count;
+
+	if (data->num_time_must_eat == 0)
+		return (0);
+	i = 0;
+	while (i < data->num_philos)
+	{
+		pthread_mutex_lock(&data->monitor_mutex);
+		meals_count = data->philosophers[i].meals_count;
+		pthread_mutex_unlock(&data->monitor_mutex);
+		if (meals_count < data->num_time_must_eat)
+			return (0);
+		i++;
+	}
+	return (1);
+}
+
 void	*monitor_routine(void *arg)
 {
-	t_data *data = (t_data*)arg;
-	int philos_ate_enough = 0;
-	int i;
-	int time_since_meal;
-	int meals_count;
-	while(!data->philo_dead && !philos_ate_enough)
+	t_data	*data;
+	int		i;
+
+	data = (t_data *)arg;
+	while (!data->philo_dead)
 	{
-		if(data->num_time_must_eat)
-			philos_ate_enough = 1;
 		i = 0;
-		while(i < data->num_philos)
+		while (i < data->num_philos)
 		{
-			pthread_mutex_lock(&data->monitor_mutex);
-			time_since_meal = get_time_ms() - data->philosophers[i].last_meal_time;
-			meals_count = data->philosophers[i].meals_count;
-			pthread_mutex_unlock(&data->monitor_mutex);
-			if(time_since_meal > data->time_to_die)
-			{
-				print_locked(&data->philosophers[i], "died");
-				return NULL;
-			}
-			if(meals_count < data->num_time_must_eat && data->num_time_must_eat != 0)
-				philos_ate_enough = 0;
+			if (philo_is_dead(data, i))
+				return (NULL);
 			i++;
+		}
+		if (check_if_all_ate(data))
+		{
+			pthread_mutex_lock(&data->death_mutex);
+			data->simulation_is_completed = 1;
+			pthread_mutex_unlock(&data->death_mutex);
+			return (NULL);
 		}
 		usleep(500);
 	}
-	if(philos_ate_enough && data->num_time_must_eat)
-	{
-		pthread_mutex_lock(&data->death_mutex);
-        data->simulation_is_completed = 1;
-        pthread_mutex_unlock(&data->death_mutex);
-		return NULL;
-	}
-	return NULL;
+	return (NULL);
 }
 
 /*PHILOSOPHER'S ROUTINE 🧠*/
 
 void	*philo_routine(void *arg)
 {
-	t_philo *philo = (t_philo*)arg;
-	//printf("This is the function routine with philo[%i]\n", philo->id);
-	while(!philo->data->philo_dead && !philo->data->simulation_is_completed)
+	t_philo	*philo;
+	int		should_continue;
+
+	philo = (t_philo *)arg;
+	while (1)
 	{
+		pthread_mutex_lock(&philo->data->death_mutex);
+		should_continue = !philo->data->philo_dead
+			&& !philo->data->simulation_is_completed;
+		pthread_mutex_unlock(&philo->data->death_mutex);
+		if (!should_continue)
+			break ;
 		take_forks(philo);
-		eat(philo); //habra que cambiar algunas variables dentro 
-		if(philo->data->num_time_must_eat && philo->meals_count >= philo->data->num_time_must_eat)
-			break;
+		eat(philo);
 		print_locked(philo, "is sleeping");
 		ft_usleep(philo->data->time_to_sleep);
 		print_locked(philo, "is thinking");
-		//printf("philo number %i, has eaten %i meals\n", philo->id, philo->meals_count);
 	}
-	return NULL;
+	return (NULL);
 }

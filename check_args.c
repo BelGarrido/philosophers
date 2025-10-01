@@ -6,7 +6,7 @@
 /*   By: anagarri <anagarri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 17:54:24 by anagarri          #+#    #+#             */
-/*   Updated: 2025/09/30 17:54:27 by anagarri         ###   ########.fr       */
+/*   Updated: 2025/10/01 13:50:44 by anagarri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,32 +39,33 @@ int	ft_atoi(const char *s)
 
 int	check_value(int value, int min, int max, char *msg)
 {
-	if(value < min || (max > 0 && value > max))
-	{	
+	if (value < min || (max > 0 && value > max))
+	{
 		fprintf(stderr, "Error: Invalid %s\n", msg);
-			return 0;
+		return (0);
 	}
-	return 1;
+	return (1);
 }
 
 int	check_valid_argument(char **argv, int argc)
 {
-	if((argc != 5) && (argc != 6))
+	if ((argc != 5) && (argc != 6))
 	{
 		fprintf(stderr, "Error: Invalid number or arguments\n");
-		return 0;
+		return (0);
 	}
 	if (!check_value(ft_atoi(argv[1]), 0, 200, "num_philos"))
-		return 0;
-	if (!check_value(ft_atoi(argv[2]), 0, -1, "time_to_die")) 
-		return 0;
-    if (!check_value(ft_atoi(argv[3]), 1, -1, "time_to_eat"))
-        return 0;
-    if (!check_value(ft_atoi(argv[4]), 1, -1, "time_to_sleep"))
-        return 0;
-    if (argc == 6 && !check_value(ft_atoi(argv[5]), 1, -1, "num_of_time_each_must_eat"))
-    {
-		return 0;
+		return (0);
+	if (!check_value(ft_atoi(argv[2]), 0, -1, "time_to_die"))
+		return (0);
+	if (!check_value(ft_atoi(argv[3]), 1, -1, "time_to_eat"))
+		return (0);
+	if (!check_value(ft_atoi(argv[4]), 1, -1, "time_to_sleep"))
+		return (0);
+	if (argc == 6 && !check_value(ft_atoi(argv[5]), 1, -1,
+			"num_of_time_each_must_eat"))
+	{
+		return (0);
 	}
-	return 1;
+	return (1);
 }
