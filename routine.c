@@ -6,7 +6,7 @@
 /*   By: anagarri <anagarri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 17:54:36 by anagarri          #+#    #+#             */
-/*   Updated: 2025/10/06 12:06:57 by anagarri         ###   ########.fr       */
+/*   Updated: 2025/10/06 12:47:44 by anagarri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,6 +62,43 @@ static int	check_if_all_ate(t_data *data)
 	return (1);
 }
 
+/* void	*monitor_routine(void *arg)
+{
+	t_data	*data;
+	int		i;
+
+	data = (t_data *)arg;
+	while (!data->philo_dead)
+	{
+		i = 0;
+		while (i < data->num_philos)
+		{
+			if (philo_is_dead(data, i))
+				return (NULL);
+			i++;
+		}
+		if (check_if_all_ate(data))
+		{
+			pthread_mutex_lock(&data->death_mutex);
+			data->simulation_is_completed = 1;
+			pthread_mutex_unlock(&data->death_mutex);
+			return (NULL);
+		}
+		usleep(500);
+	}
+	return (NULL);
+} */
+int simulation_finished(t_data *data)
+{
+	pthread_mutex_lock(&data->death_mutex);
+	if (data->simulation_is_completed == 1 || data->philo_dead == 1)
+	{
+		pthread_mutex_unlock(&data->death_mutex);
+		return (1);
+	}
+	pthread_mutex_unlock(&data->death_mutex);
+	return (0);
+}
 void	*monitor_routine(void *arg)
 {
     t_data	*data;
@@ -70,16 +107,11 @@ void	*monitor_routine(void *arg)
     data = (t_data *)arg;
     while (1)
     {
-        // Chequeo de flags protegido
-        pthread_mutex_lock(&data->death_mutex);
-        if (data->philo_dead || data->simulation_is_completed)
-        {
-            pthread_mutex_unlock(&data->death_mutex);
-            return (NULL);
-        }
-        pthread_mutex_unlock(&data->death_mutex);
-
-        i = 0;
+		if(simulation_finished(data))
+		{
+			return (NULL);
+		}
+		i = 0;
         while (i < data->num_philos)
         {
             if (philo_is_dead(data, i))
@@ -104,16 +136,11 @@ void	*monitor_routine(void *arg)
 void	*philo_routine(void *arg)
 {
 	t_philo	*philo;
-	int		should_continue;
 
 	philo = (t_philo *)arg;
 	while (1)
 	{
-		pthread_mutex_lock(&philo->data->death_mutex);
-		should_continue = !philo->data->philo_dead
-			&& !philo->data->simulation_is_completed;
-		pthread_mutex_unlock(&philo->data->death_mutex);
-		if (!should_continue)
+		if (simulation_finished(philo->data))
 			break ;
 		take_forks(philo);
 		eat(philo);

@@ -6,7 +6,7 @@
 /*   By: anagarri <anagarri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/01 12:26:11 by anagarri          #+#    #+#             */
-/*   Updated: 2025/10/06 12:06:04 by anagarri         ###   ########.fr       */
+/*   Updated: 2025/10/06 12:48:17 by anagarri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,7 @@ void	take_forks(t_philo *philo)
 	}
 }
 
-int	end_simulation(t_data *data, t_philo *philo)
+int	close_simulation(t_data *data)
 {
 	int	i;
 

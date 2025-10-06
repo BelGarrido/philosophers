@@ -6,7 +6,7 @@
 /*   By: anagarri <anagarri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/01 15:03:25 by anagarri          #+#    #+#             */
-/*   Updated: 2025/10/06 12:05:46 by anagarri         ###   ########.fr       */
+/*   Updated: 2025/10/06 12:48:17 by anagarri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,18 +114,12 @@ int	main(int argc, char *argv[])
 	if (!join_philos(philo, &data))
 		return (1);
 	/*
-	 * IMPORTANTE: antes destruíamos los mutex dentro de end_simulation
+	 * IMPORTANTE: antes destruíamos los mutex dentro de close_simulation
 	 * después de hacer un lock aquí, y además había un segundo lock
 	 * en vez de un unlock -> esto podía provocar comportamiento
 	 * indefinido y falsos positivos en TSAN.
 	 */
-	pthread_mutex_lock(&data.death_mutex);
-	if (data.simulation_is_completed == 1 || data.philo_dead == 1)
-	{
-		pthread_mutex_unlock(&data.death_mutex);
-		end_simulation(&data, philo);
-		return (0);
-	}
-	pthread_mutex_unlock(&data.death_mutex);
+	if (simulation_finished(&data))
+		close_simulation(&data);
 	return (0);
 }

@@ -6,7 +6,7 @@
 /*   By: anagarri <anagarri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/01 15:31:49 by anagarri          #+#    #+#             */
-/*   Updated: 2025/10/06 12:05:40 by anagarri         ###   ########.fr       */
+/*   Updated: 2025/10/06 12:48:17 by anagarri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,6 +73,7 @@ void	ft_usleep(long int miliseconds);
 /*Utils*/
 void	ft_putstr_fd(char *s, int fd);
 void	print_locked(t_philo *philo, char *msg);
-int		end_simulation(t_data *data, t_philo *philo);
+int		close_simulation(t_data *data);
+int 	simulation_finished(t_data *data);
 
 #endif
