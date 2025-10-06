@@ -6,7 +6,7 @@
 /*   By: anagarri <anagarri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 17:54:36 by anagarri          #+#    #+#             */
-/*   Updated: 2025/10/06 12:47:44 by anagarri         ###   ########.fr       */
+/*   Updated: 2025/10/06 13:39:50 by anagarri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,121 +14,28 @@
 
 /* MONITORING ROUTINE 🕵️*/
 
-static int	philo_is_dead(t_data *data, int i)
-{
-    long	ts;
-    int		time_since_meal;
-
-    pthread_mutex_lock(&data->monitor_mutex);
-    time_since_meal = get_time_ms() - data->philosophers[i].last_meal_time;
-    pthread_mutex_unlock(&data->monitor_mutex);
-    if (time_since_meal > data->time_to_die)
-    {
-        pthread_mutex_lock(&data->death_mutex);
-        if (!data->philo_dead && !data->simulation_is_completed)
-        {
-            data->philo_dead = 1;
-            ts = get_timestamp(data->start_time);
-            pthread_mutex_unlock(&data->death_mutex);
-
-            pthread_mutex_lock(&data->print_mutex);
-            printf("%li %d died\n", ts, data->philosophers[i].id);
-            pthread_mutex_unlock(&data->print_mutex);
-            return (1);
-        }
-        pthread_mutex_unlock(&data->death_mutex);
-        return (1);
-    }
-    return (0);
-}
-
-static int	check_if_all_ate(t_data *data)
-{
-	int	i;
-	int	meals_count;
-
-	if (data->num_time_must_eat == 0)
-		return (0);
-	i = 0;
-	while (i < data->num_philos)
-	{
-		pthread_mutex_lock(&data->monitor_mutex);
-		meals_count = data->philosophers[i].meals_count;
-		pthread_mutex_unlock(&data->monitor_mutex);
-		if (meals_count < data->num_time_must_eat)
-			return (0);
-		i++;
-	}
-	return (1);
-}
-
-/* void	*monitor_routine(void *arg)
+void	*monitor_routine(void *arg)
 {
 	t_data	*data;
-	int		i;
 
 	data = (t_data *)arg;
-	while (!data->philo_dead)
+	while (1)
 	{
-		i = 0;
-		while (i < data->num_philos)
-		{
-			if (philo_is_dead(data, i))
-				return (NULL);
-			i++;
-		}
+		if (simulation_finished(data))
+			return (NULL);
+		if (any_philo_dead(data))
+			return (NULL);
 		if (check_if_all_ate(data))
 		{
 			pthread_mutex_lock(&data->death_mutex);
-			data->simulation_is_completed = 1;
+			if (!data->philo_dead)
+				data->simulation_is_completed = 1;
 			pthread_mutex_unlock(&data->death_mutex);
 			return (NULL);
 		}
 		usleep(500);
 	}
 	return (NULL);
-} */
-int simulation_finished(t_data *data)
-{
-	pthread_mutex_lock(&data->death_mutex);
-	if (data->simulation_is_completed == 1 || data->philo_dead == 1)
-	{
-		pthread_mutex_unlock(&data->death_mutex);
-		return (1);
-	}
-	pthread_mutex_unlock(&data->death_mutex);
-	return (0);
-}
-void	*monitor_routine(void *arg)
-{
-    t_data	*data;
-    int		i;
-
-    data = (t_data *)arg;
-    while (1)
-    {
-		if(simulation_finished(data))
-		{
-			return (NULL);
-		}
-		i = 0;
-        while (i < data->num_philos)
-        {
-            if (philo_is_dead(data, i))
-                return (NULL);
-            i++;
-        }
-        if (check_if_all_ate(data))
-        {
-            pthread_mutex_lock(&data->death_mutex);
-            if (!data->philo_dead)
-                data->simulation_is_completed = 1;
-            pthread_mutex_unlock(&data->death_mutex);
-            return (NULL);
-        }
-        usleep(500);
-    }
-    return (NULL);
 }
 
 /*PHILOSOPHER'S ROUTINE 🧠*/

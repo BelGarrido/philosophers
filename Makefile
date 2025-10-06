@@ -7,7 +7,8 @@ SRC= philo.c \
 	utils.c \
 	actions.c \
 	routine.c \
-	check_args.c
+	check_args.c \
+	finalization_checks.c
 
 OBJ = $(SRC:.c=.o)
 

@@ -6,7 +6,7 @@
 /*   By: anagarri <anagarri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/01 15:31:49 by anagarri          #+#    #+#             */
-/*   Updated: 2025/10/06 12:48:17 by anagarri         ###   ########.fr       */
+/*   Updated: 2025/10/06 13:40:25 by anagarri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,24 +56,28 @@ typedef struct s_philo
 	pthread_mutex_t	*death_mutex;
 }	t_philo;
 
-/*Actions*/
-void	eat(t_philo *philo);
-void	take_forks(t_philo *philo);
-/*Check_args*/
-void	init_arguments(char **argv, t_data *data, int argc);
-int		check_valid_argument(char **argv, int argc);
-int		ft_atoi(const char *s);
-/* Routine.c*/
-void	*monitor_routine(void *arg);
-void	*philo_routine(void *arg);
-/*Get_time.c*/
-long	get_timestamp(long start_time);
-long	get_time_ms(void);
-void	ft_usleep(long int miliseconds);
-/*Utils*/
-void	ft_putstr_fd(char *s, int fd);
-void	print_locked(t_philo *philo, char *msg);
-int		close_simulation(t_data *data);
-int 	simulation_finished(t_data *data);
+/* check_args.c */
+int		check_valid_argument(char **argv, int argc); // check_args.c
+int		ft_atoi(const char *s); // check_args.c
+
+/* actions.c */
+void	eat(t_philo *philo); // actions.c
+void	take_forks(t_philo *philo); // actions.c
+int		close_simulation(t_data *data); // actions.c
+
+/* routine.c */
+void	*monitor_routine(void *arg); // routine.c
+void	*philo_routine(void *arg); // routine.c
+
+/* finalization_checks.c */
+int		simulation_finished(t_data *data); // finalization_checks.c
+int		any_philo_dead(t_data *data); // finalization_checks.c
+int		check_if_all_ate(t_data *data);
+
+/* utils.c */
+long	get_timestamp(long start_time); // utils.c
+long	get_time_ms(void); // utils.c
+void	ft_usleep(long int miliseconds); // utils.c
+void	print_locked(t_philo *philo, char *msg); // utils.c
 
 #endif

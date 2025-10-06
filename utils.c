@@ -6,33 +6,11 @@
 /*   By: anagarri <anagarri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 17:54:49 by anagarri          #+#    #+#             */
-/*   Updated: 2025/10/06 11:29:30 by anagarri         ###   ########.fr       */
+/*   Updated: 2025/10/06 13:38:21 by anagarri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
-
-int	ft_strncmp(char *s1, char *s2, size_t n)
-{
-	unsigned int	i;
-	unsigned char	*str1;
-	unsigned char	*str2;
-
-	i = 0;
-	str1 = (unsigned char *)s1;
-	str2 = (unsigned char *)s2;
-	while (str1[i] != '\0' && str2[i] != '\0' && (i < n))
-	{
-		if (str1[i] != str2[i])
-			return (str1[i] - str2[i]);
-		i++;
-	}
-	if (i < n)
-	{
-		return (str1[i] - str2[i]);
-	}
-	return (0);
-}
 
 void	print_locked(t_philo *philo, char *msg)
 {
