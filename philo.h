@@ -6,7 +6,7 @@
 /*   By: anagarri <anagarri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/01 15:31:49 by anagarri          #+#    #+#             */
-/*   Updated: 2025/10/01 15:36:54 by anagarri         ###   ########.fr       */
+/*   Updated: 2025/10/06 12:05:40 by anagarri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,6 @@ typedef struct s_philo
 	pthread_mutex_t	*r_fork;
 	pthread_mutex_t	*print_mutex;
 	pthread_mutex_t	*death_mutex;
-	pthread_mutex_t	eating_mutex;
 }	t_philo;
 
 /*Actions*/

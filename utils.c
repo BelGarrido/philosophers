@@ -6,7 +6,7 @@
 /*   By: anagarri <anagarri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 17:54:49 by anagarri          #+#    #+#             */
-/*   Updated: 2025/10/01 15:29:39 by anagarri         ###   ########.fr       */
+/*   Updated: 2025/10/06 11:29:30 by anagarri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,16 +39,6 @@ void	print_locked(t_philo *philo, char *msg)
 	pthread_mutex_lock(philo->death_mutex);
 	if (philo->data->philo_dead || philo->data->simulation_is_completed)
 	{
-		pthread_mutex_unlock(philo->death_mutex);
-		return ;
-	}
-	if (ft_strncmp(msg, "died", 4) == 0)
-	{
-		philo->data->philo_dead = 1;
-		pthread_mutex_lock(philo->print_mutex);
-		printf("%li %i died\n", get_timestamp(philo->data->start_time),
-			philo->id);
-		pthread_mutex_unlock(philo->print_mutex);
 		pthread_mutex_unlock(philo->death_mutex);
 		return ;
 	}

@@ -6,7 +6,7 @@
 /*   By: anagarri <anagarri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/01 15:03:25 by anagarri          #+#    #+#             */
-/*   Updated: 2025/10/01 15:25:43 by anagarri         ###   ########.fr       */
+/*   Updated: 2025/10/06 12:05:46 by anagarri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,6 @@ int	init_philosophers(t_philo *philo, t_data *data)
 		philo[i].l_fork = &data->forks[(i + 1) % data->num_philos];
 		philo[i].print_mutex = &data->print_mutex;
 		philo[i].death_mutex = &data->death_mutex;
-		pthread_mutex_init(&philo[i].eating_mutex, NULL);
 		i++;
 	}
 	i = 0;
@@ -114,7 +113,19 @@ int	main(int argc, char *argv[])
 		return (1);
 	if (!join_philos(philo, &data))
 		return (1);
+	/*
+	 * IMPORTANTE: antes destruíamos los mutex dentro de end_simulation
+	 * después de hacer un lock aquí, y además había un segundo lock
+	 * en vez de un unlock -> esto podía provocar comportamiento
+	 * indefinido y falsos positivos en TSAN.
+	 */
+	pthread_mutex_lock(&data.death_mutex);
 	if (data.simulation_is_completed == 1 || data.philo_dead == 1)
+	{
+		pthread_mutex_unlock(&data.death_mutex);
 		end_simulation(&data, philo);
+		return (0);
+	}
+	pthread_mutex_unlock(&data.death_mutex);
 	return (0);
 }
