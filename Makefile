@@ -1,21 +1,22 @@
-CC = gcc -pthread
-CFLAGS = -Wall -Werror -Wextra -g #-fsanitize=thread
+CC = cc
+CFLAGS = -Wall -Werror -Wextra -pthread -g #-fsanitize=thread
+INC = -I include
 
 NAME = philo
 
-SRC= philo.c \
-	utils.c \
-	actions.c \
-	routine.c \
-	check_args.c \
-	finalization_checks.c
+SRC= src/philo.c \
+	src/utils.c \
+	src/actions.c \
+	src/routine.c \
+	src/check_args.c \
+	src/finalization_checks.c
 
 OBJ = $(SRC:.c=.o)
 
 all: $(NAME)
 
 $(NAME): $(OBJ)
-	$(CC) $(CFLAGS) $(OBJ) -o $(NAME)
+	$(CC) $(CFLAGS) $(INC) $(OBJ) -o $(NAME)
 
 %.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@

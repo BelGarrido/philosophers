@@ -6,7 +6,7 @@
 /*   By: anagarri <anagarri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/01 15:31:49 by anagarri          #+#    #+#             */
-/*   Updated: 2025/10/06 13:40:25 by anagarri         ###   ########.fr       */
+/*   Updated: 2025/10/14 18:04:06 by anagarri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 # include <unistd.h>
 # include <stdlib.h>
 # include <sys/time.h>
+# include <limits.h>
 
 # define MAX 200
 
@@ -54,6 +55,7 @@ typedef struct s_philo
 	pthread_mutex_t	*r_fork;
 	pthread_mutex_t	*print_mutex;
 	pthread_mutex_t	*death_mutex;
+	pthread_mutex_t	meals_mutex;
 }	t_philo;
 
 /* check_args.c */
@@ -62,7 +64,7 @@ int		ft_atoi(const char *s); // check_args.c
 
 /* actions.c */
 void	eat(t_philo *philo); // actions.c
-void	take_forks(t_philo *philo); // actions.c
+int		take_forks(t_philo *philo); // actions.c
 int		close_simulation(t_data *data); // actions.c
 
 /* routine.c */
@@ -77,7 +79,7 @@ int		check_if_all_ate(t_data *data);
 /* utils.c */
 long	get_timestamp(long start_time); // utils.c
 long	get_time_ms(void); // utils.c
-void	ft_usleep(long int miliseconds); // utils.c
+void	ft_usleep(long time, t_data *data); // utils.c
 void	print_locked(t_philo *philo, char *msg); // utils.c
 
 #endif

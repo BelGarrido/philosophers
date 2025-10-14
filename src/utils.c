@@ -6,11 +6,25 @@
 /*   By: anagarri <anagarri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 17:54:49 by anagarri          #+#    #+#             */
-/*   Updated: 2025/10/06 13:38:21 by anagarri         ###   ########.fr       */
+/*   Updated: 2025/10/14 18:37:30 by anagarri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "philo.h"
+#include "../include/philo.h"
+
+int	join_philos(t_philo *philo, t_data *data)
+{
+	int	i;
+
+	i = 0;
+	while (i < data->num_philos)
+	{
+		if (pthread_join(philo[i].thread, NULL))
+			return (0);
+		i++;
+	}
+	return (1);
+}
 
 void	print_locked(t_philo *philo, char *msg)
 {
@@ -48,11 +62,16 @@ long	get_timestamp(long start_time)
 	return (time);
 }
 
-void	ft_usleep(long int miliseconds)
+void	ft_usleep(long time, t_data *data)
 {
 	long int		start;
 
 	start = get_time_ms();
-	while ((get_time_ms() - start) < miliseconds)
-		usleep(100);
+	while (!simulation_finished(data))
+	{
+		if ((get_time_ms() - start) < time)
+			usleep(100);
+		else
+			break ;
+	}
 }

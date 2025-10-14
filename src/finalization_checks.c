@@ -6,11 +6,11 @@
 /*   By: anagarri <anagarri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/06 13:30:25 by anagarri          #+#    #+#             */
-/*   Updated: 2025/10/06 13:39:35 by anagarri         ###   ########.fr       */
+/*   Updated: 2025/10/14 18:37:37 by anagarri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "philo.h"
+#include "../include/philo.h"
 
 /* MONITORING ROUTINE 🕵️*/
 
@@ -25,6 +25,7 @@ int	close_simulation(t_data *data)
 	while (i < data->num_philos)
 	{
 		pthread_mutex_destroy(&data->forks[i]);
+		pthread_mutex_destroy(&data->philosophers[i].meals_mutex);
 		i++;
 	}
 	return (0);
@@ -47,9 +48,9 @@ static int	philo_is_dead(t_data *data, int i)
 	long	ts;
 	int		time_since_meal;
 
-	pthread_mutex_lock(&data->monitor_mutex);
+	pthread_mutex_lock(&data->philosophers[i].meals_mutex);
 	time_since_meal = get_time_ms() - data->philosophers[i].last_meal_time;
-	pthread_mutex_unlock(&data->monitor_mutex);
+	pthread_mutex_unlock(&data->philosophers[i].meals_mutex);
 	if (time_since_meal > data->time_to_die)
 	{
 		pthread_mutex_lock(&data->death_mutex);
@@ -73,20 +74,22 @@ int	check_if_all_ate(t_data *data)
 {
 	int	i;
 	int	meals_count;
+	int	all_ate;
 
 	if (data->num_time_must_eat == 0)
 		return (0);
+	all_ate = 1;
 	i = 0;
 	while (i < data->num_philos)
 	{
-		pthread_mutex_lock(&data->monitor_mutex);
+		pthread_mutex_lock(&data->philosophers[i].meals_mutex);
 		meals_count = data->philosophers[i].meals_count;
-		pthread_mutex_unlock(&data->monitor_mutex);
+		pthread_mutex_unlock(&data->philosophers[i].meals_mutex);
 		if (meals_count < data->num_time_must_eat)
-			return (0);
+			all_ate = 0;
 		i++;
 	}
-	return (1);
+	return (all_ate);
 }
 
 int	any_philo_dead(t_data *data)

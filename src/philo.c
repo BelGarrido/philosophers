@@ -6,11 +6,11 @@
 /*   By: anagarri <anagarri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/01 15:03:25 by anagarri          #+#    #+#             */
-/*   Updated: 2025/10/06 13:12:32 by anagarri         ###   ########.fr       */
+/*   Updated: 2025/10/14 18:37:59 by anagarri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "philo.h"
+#include "../include/philo.h"
 
 int	init_forks(pthread_mutex_t *forks, t_data *data)
 {
@@ -24,20 +24,6 @@ int	init_forks(pthread_mutex_t *forks, t_data *data)
 			perror("Error");
 			return (0);
 		}
-		i++;
-	}
-	return (1);
-}
-
-int	join_philos(t_philo *philo, t_data *data)
-{
-	int	i;
-
-	i = 0;
-	while (i < data->num_philos)
-	{
-		if (pthread_join(philo[i].thread, NULL))
-			return (0);
 		i++;
 	}
 	return (1);
@@ -58,8 +44,16 @@ int	init_philosophers(t_philo *philo, t_data *data)
 		philo[i].l_fork = &data->forks[(i + 1) % data->num_philos];
 		philo[i].print_mutex = &data->print_mutex;
 		philo[i].death_mutex = &data->death_mutex;
+		pthread_mutex_init(&philo[i].meals_mutex, NULL);
 		i++;
 	}
+	return (1);
+}
+
+int	start_threads(t_philo *philo, t_data *data)
+{
+	int	i;
+
 	i = 0;
 	while (i < data->num_philos)
 	{
@@ -83,7 +77,7 @@ void	init_data(t_data *data, char **argv)
 		data->num_time_must_eat = 0;
 	data->simulation_is_completed = 0;
 	data->philo_dead = 0;
-	data->start_time = get_time_ms();
+	data->start_time = get_time_ms() + 100;
 	pthread_mutex_init(&data->print_mutex, NULL);
 	pthread_mutex_init(&data->death_mutex, NULL);
 	pthread_mutex_init(&data->monitor_mutex, NULL);
@@ -105,6 +99,8 @@ int	main(int argc, char *argv[])
 	if (!init_forks(forks, &data))
 		return (1);
 	if (!init_philosophers(philo, &data))
+		return (1);
+	if (!start_threads(philo, &data))
 		return (1);
 	if (pthread_create(&data.monitor_thread, NULL, monitor_routine,
 			(void *)&data) != 0)
