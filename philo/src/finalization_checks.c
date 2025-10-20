@@ -6,30 +6,13 @@
 /*   By: anagarri <anagarri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/06 13:30:25 by anagarri          #+#    #+#             */
-/*   Updated: 2025/10/14 18:37:37 by anagarri         ###   ########.fr       */
+/*   Updated: 2025/10/20 15:36:17 by anagarri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/philo.h"
 
 /* MONITORING ROUTINE 🕵️*/
-
-int	close_simulation(t_data *data)
-{
-	int	i;
-
-	i = 0;
-	pthread_mutex_destroy(&data->death_mutex);
-	pthread_mutex_destroy(&data->print_mutex);
-	pthread_mutex_destroy(&data->monitor_mutex);
-	while (i < data->num_philos)
-	{
-		pthread_mutex_destroy(&data->forks[i]);
-		pthread_mutex_destroy(&data->philosophers[i].meals_mutex);
-		i++;
-	}
-	return (0);
-}
 
 int	simulation_finished(t_data *data)
 {
@@ -46,8 +29,10 @@ int	simulation_finished(t_data *data)
 static int	philo_is_dead(t_data *data, int i)
 {
 	long	ts;
-	int		time_since_meal;
+	long	time_since_meal;
 
+	if (check_if_one_ate(&data->philosophers[i]))
+		return (0);
 	pthread_mutex_lock(&data->philosophers[i].meals_mutex);
 	time_since_meal = get_time_ms() - data->philosophers[i].last_meal_time;
 	pthread_mutex_unlock(&data->philosophers[i].meals_mutex);
@@ -68,6 +53,21 @@ static int	philo_is_dead(t_data *data, int i)
 		return (1);
 	}
 	return (0);
+}
+
+int	check_if_one_ate(t_philo *philo)
+{
+	int	done;
+
+	done = 0;
+	pthread_mutex_lock(&philo->meals_mutex);
+	done = (philo->data->num_time_must_eat > 0
+			&& philo->meals_count >= philo->data->num_time_must_eat);
+	pthread_mutex_unlock(&philo->meals_mutex);
+	if (done)
+		return (1);
+	else
+		return (0);
 }
 
 int	check_if_all_ate(t_data *data)

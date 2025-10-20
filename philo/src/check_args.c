@@ -6,7 +6,7 @@
 /*   By: anagarri <anagarri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 17:54:24 by anagarri          #+#    #+#             */
-/*   Updated: 2025/10/14 12:37:25 by anagarri         ###   ########.fr       */
+/*   Updated: 2025/10/20 11:30:47 by anagarri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,16 +32,17 @@ int	ft_isnum(char *str)
 
 int	ft_atoi(const char *s)
 {
-	int		i;
-	int		neg;
-	long	number;
+	int			i;
+	int			neg;
+	long long	number;
+	long		check;
 
 	i = 0;
 	neg = 1;
 	number = 0;
 	while ((s[i] >= 9 && s[i] <= 13) || s[i] == 32)
 		i++;
-	if (s [i] == '+' || s[i] == '-')
+	if (s[i] == '+' || s[i] == '-')
 	{
 		if (s[i] == '-')
 			neg = -neg;
@@ -49,11 +50,12 @@ int	ft_atoi(const char *s)
 	}
 	while (s[i] >= '0' && s[i] <= '9')
 	{
+		check = number;
 		number = number * 10 + s[i] - '0';
+		if (number < check || number > INT_MAX)
+			return (0);
 		i++;
 	}
-	if (number > INT_MAX)
-		return (0);
 	return (number * neg);
 }
 

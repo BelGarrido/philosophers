@@ -9,7 +9,8 @@ SRC= src/philo.c \
 	src/actions.c \
 	src/routine.c \
 	src/check_args.c \
-	src/finalization_checks.c
+	src/finalization_checks.c \
+	src/clean.c
 
 OBJ = $(SRC:.c=.o)
 

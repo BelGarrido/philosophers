@@ -6,7 +6,7 @@
 /*   By: anagarri <anagarri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/01 15:31:49 by anagarri          #+#    #+#             */
-/*   Updated: 2025/10/14 18:04:06 by anagarri         ###   ########.fr       */
+/*   Updated: 2025/10/20 15:23:31 by anagarri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,27 +59,32 @@ typedef struct s_philo
 }	t_philo;
 
 /* check_args.c */
-int		check_valid_argument(char **argv, int argc); // check_args.c
-int		ft_atoi(const char *s); // check_args.c
+int		check_valid_argument(char **argv, int argc);
+int		ft_atoi(const char *s);
 
 /* actions.c */
-void	eat(t_philo *philo); // actions.c
-int		take_forks(t_philo *philo); // actions.c
-int		close_simulation(t_data *data); // actions.c
+void	eat(t_philo *philo);
+int		take_forks(t_philo *philo);
+int		close_simulation(t_data *data);
 
 /* routine.c */
-void	*monitor_routine(void *arg); // routine.c
-void	*philo_routine(void *arg); // routine.c
+void	*monitor_routine(void *arg);
+void	*philo_routine(void *arg);
 
 /* finalization_checks.c */
-int		simulation_finished(t_data *data); // finalization_checks.c
-int		any_philo_dead(t_data *data); // finalization_checks.c
+int		simulation_finished(t_data *data);
+int		any_philo_dead(t_data *data);
 int		check_if_all_ate(t_data *data);
+int		check_if_one_ate(t_philo *philo);
 
 /* utils.c */
-long	get_timestamp(long start_time); // utils.c
-long	get_time_ms(void); // utils.c
-void	ft_usleep(long time, t_data *data); // utils.c
-void	print_locked(t_philo *philo, char *msg); // utils.c
+long	get_timestamp(long start_time);
+long	get_time_ms(void);
+void	ft_usleep(long time, t_data *data);
+void	print_locked(t_philo *philo, char *msg);
+int		join_philos(t_philo *philo, t_data *data);
+
+/*clean*/
+int		close_simulation(t_data *data);
 
 #endif

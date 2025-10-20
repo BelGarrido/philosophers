@@ -6,7 +6,7 @@
 /*   By: anagarri <anagarri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/01 12:26:11 by anagarri          #+#    #+#             */
-/*   Updated: 2025/10/14 18:28:26 by anagarri         ###   ########.fr       */
+/*   Updated: 2025/10/20 15:20:30 by anagarri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,12 @@ void	eat(t_philo *philo)
 	pthread_mutex_lock(&philo->meals_mutex);
 	philo->meals_count++;
 	pthread_mutex_unlock(&philo->meals_mutex);
+	if (philo->data->num_time_must_eat > 0 && check_if_all_ate(philo->data))
+	{
+		pthread_mutex_lock(&philo->data->death_mutex);
+		philo->data->simulation_is_completed = 1;
+		pthread_mutex_unlock(&philo->data->death_mutex);
+	}
 	pthread_mutex_unlock(philo->r_fork);
 	pthread_mutex_unlock(philo->l_fork);
 }
