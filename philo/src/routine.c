@@ -49,17 +49,18 @@ void	*philo_routine(void *arg)
 	{
 		while (get_time_ms() < philo->data->start_time)
 			usleep(100);
-		pthread_mutex_lock(&philo->meals_mutex);
-		philo->last_meal_time = get_time_ms();
-		pthread_mutex_unlock(&philo->meals_mutex);
 		if (check_if_one_ate(philo))
 			break ;
 		if (take_forks(philo))
 			eat(philo);
+		if (simulation_finished(philo->data))
+			break ;
 		if (check_if_one_ate(philo))
 			break ;
 		print_locked(philo, "is sleeping");
 		ft_usleep(philo->data->time_to_sleep, philo->data);
+		if (simulation_finished(philo->data))
+			break ;
 		print_locked(philo, "is thinking");
 	}
 	return (NULL);

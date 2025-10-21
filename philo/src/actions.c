@@ -27,6 +27,7 @@ void	eat(t_philo *philo)
 		pthread_mutex_lock(&philo->data->death_mutex);
 		philo->data->simulation_is_completed = 1;
 		pthread_mutex_unlock(&philo->data->death_mutex);
+		return ;
 	}
 	pthread_mutex_unlock(philo->r_fork);
 	pthread_mutex_unlock(philo->l_fork);
