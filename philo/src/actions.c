@@ -22,6 +22,8 @@ void	eat(t_philo *philo)
 	pthread_mutex_lock(&philo->meals_mutex);
 	philo->meals_count++;
 	pthread_mutex_unlock(&philo->meals_mutex);
+	pthread_mutex_unlock(philo->r_fork);
+	pthread_mutex_unlock(philo->l_fork);
 	if (philo->data->num_time_must_eat > 0 && check_if_all_ate(philo->data))
 	{
 		pthread_mutex_lock(&philo->data->death_mutex);
@@ -29,8 +31,6 @@ void	eat(t_philo *philo)
 		pthread_mutex_unlock(&philo->data->death_mutex);
 		return ;
 	}
-	pthread_mutex_unlock(philo->r_fork);
-	pthread_mutex_unlock(philo->l_fork);
 }
 
 void	one_filosopher_routine(t_philo *philo)
@@ -81,18 +81,21 @@ int	take_forks(t_philo *philo)
 	}
 	if (simulation_finished(philo->data))
 		return (0);
-	if (philo->id % 2 == 0)
-		ft_usleep(1, philo->data);
-	if (philo->id % 2 == 0)
+	pthread_mutex_t *first_fork;
+	pthread_mutex_t *second_fork;
+
+	if (philo->r_fork < philo->l_fork)
 	{
-		if (!fork_is_taken(philo->r_fork, philo->l_fork, philo))
-			return (0);
+		first_fork = philo->r_fork;
+		second_fork = philo->l_fork;
 	}
 	else
 	{
-		if (!fork_is_taken(philo->l_fork, philo->r_fork, philo))
-			return (0);
+		first_fork = philo->l_fork;
+		second_fork = philo->r_fork;
 	}
+	if (!fork_is_taken(first_fork, second_fork, philo))
+		return (0);
 	return (1);
 }
 

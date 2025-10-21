@@ -38,7 +38,7 @@ int	init_philosophers(t_philo *philo, t_data *data)
 	{
 		philo[i].id = i + 1;
 		philo[i].meals_count = 0;
-		philo[i].last_meal_time = get_time_ms();
+		philo[i].last_meal_time = data->start_time;
 		philo[i].data = data;
 		philo[i].r_fork = &data->forks[i];
 		philo[i].l_fork = &data->forks[(i + 1) % data->num_philos];
